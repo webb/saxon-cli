@@ -1,0 +1,14 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtime 'net.sf.saxon:Saxon-HE:9.6.0-3'
+}
+
+task out(type:Copy) {
+     from configurations.runtime
+     into 'tmp/image/share/CONFIG_PACKAGE_NAME'
+}

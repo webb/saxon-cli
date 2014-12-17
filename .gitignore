@@ -1,0 +1,9 @@
+Makefile
+config-decls.m4
+reconfigure
+*~
+tmp
+\#*\#
+.\#*
+.gradle
+build.gradle

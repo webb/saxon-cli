@@ -1,0 +1,115 @@
+#!CONFIG_BASH_COMMAND
+
+# Copyright 2014 Georgia Tech Research Corporation (GTRC). All rights reserved.
+
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+
+# You should have received a copy of the GNU General Public License along with
+# this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#HELP:COMMAND_NAME: Run the Saxon XSLT processor
+#HELP:Invocation:
+#HELP:  COMMAND_NAME (Options) -- saxon-args ...
+
+. "CONFIG_PREFIX"/lib/bash/common.bash
+. "CONFIG_PREFIX"/lib/bash/opt_help.bash
+. "CONFIG_PREFIX"/lib/bash/opt_verbose.bash
+. "CONFIG_PREFIX"/lib/bash/fail.bash
+
+#HELP:Options:
+#HELP:  --help | -h: Print this help
+#HELP:  --verbose, -v: Print additional diagnostics
+
+#HELP:  --in=$file, -i $file: Take source input from file
+#HELP:      if file is "-", take input from stdin
+unset in_file
+opt_in () {
+    (( $# == 1 )) || fail_assert "$FUNCNAME takes 1 arg (got $#)"
+    [[ $1 = "-" || -f "$1" ]] || fail "Value of --in must be a file or \"-\""
+    in_file=$1
+}
+
+#HELP:  --out=$file, -o $file: Put output to file
+unset out_file
+opt_out () {
+    (( $# == 1 )) || fail_assert "$FUNCNAME takes 1 arg (got $#)"
+    out_file=$1
+}
+
+#HELP:  --xsl=$file, -x $file: Use XSLT file
+#HELP:      if file is "-", read XSLT from stdin
+unset xsl_file
+opt_xsl () {
+    (( $# == 1 )) || fail_assert "$FUNCNAME takes 1 arg (got $#)"
+    [[ $1 = "-" || -f "$1" ]] || fail "Value of --xsl must be a file or \"-\" (got $1)"
+    xsl_file=$1
+}
+
+#HELP:Useful Saxon args:
+#HELP:  -s:$file : Take input from file
+#HELP:  -s:- : Take input from stdin
+#HELP:  -o:$file : Put output to file. Default is to send output to stderr
+#HELP:  -xsl:$file : Use stylesheet
+
+OPTIND=1
+while getopts :hi:o:vx:-: option
+do case "$option" in
+       h ) opt_help;;
+       i ) opt_in "$OPTARG";;
+       o ) opt_out "$OPTARG";;
+       v ) opt_verbose;;
+       x ) opt_xsl "$OPTARG";;
+       - ) case "$OPTARG" in
+               help ) opt_help;;
+               verbose ) opt_verbose;;
+               help=* | verbose=* ) fail "Long option \"${OPTARG%%=*}\" has unexpected argument";;
+
+               in=* ) opt_in "${OPTARG#*=}";;
+               out=* ) opt_out "${OPTARG#*=}";;
+               xsl=* ) opt_xsl "${OPTARG#*=}";;
+               in | out ) fail "Long option \"$OPTARG\" needs an argument";;
+               
+               * ) fail "Unknown long option \"${OPTARG%%=*}\"";;
+            esac;;
+        '?' ) fail "Unknown short option \"$OPTARG\"";;
+        : ) fail "Short option \"$OPTARG\" missing argument";;
+        * ) fail_assert "Bad state in getopts (OPTARG=\"$OPTARG\")";;
+   esac
+done
+shift $((OPTIND-1))
+
+command=('CONFIG_JAVA_COMMAND'
+           -classpath "$('CONFIG_JOIN_STRINGS_COMMAND' --delimiter=: 'CONFIG_SHARE_DIR'/*.jar)"
+           net.sf.saxon.Transform)
+
+if [[ is-set = ${in_file+is-set} ]]
+then command+=( -s:"$in_file" )
+fi
+
+if [[ is-set = ${out_file+is-set} ]]
+then command+=( -o:"$out_file" )
+fi
+
+if [[ is-set = ${xsl_file+is-set} ]]
+then command+=( -xsl:"$xsl_file" )
+fi
+
+command+=( "$@" )
+
+vrun "${command[@]}"
+
+m4_dnl Local Variables:
+m4_dnl mode: shell-script
+m4_dnl eval: (sh-set-shell "bash")
+m4_dnl indent-tabs-mode: nil
+m4_dnl fill-column: 9999
+m4_dnl End:
+
