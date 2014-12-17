@@ -1,4 +1,4 @@
-#!CONFIG_BASH_COMMAND
+#!/usr/bin/env bash
 
 # Copyright 2014 Georgia Tech Research Corporation (GTRC). All rights reserved.
 
@@ -15,18 +15,42 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#HELP:COMMAND_NAME: Run the Saxon XSLT processor
-#HELP:Invocation:
-#HELP:  COMMAND_NAME (Options) -- saxon-args ...
+set -o nounset -o errexit
+command_name=$(basename "$0")
+command_dir=$(dirname "$0")
+command_path=$0
 
-. "CONFIG_PREFIX"/lib/bash/common.bash
-. "CONFIG_PREFIX"/lib/bash/opt_help.bash
-. "CONFIG_PREFIX"/lib/bash/opt_verbose.bash
-. "CONFIG_PREFIX"/lib/bash/fail.bash
+#HELP:COMMAND_NAME: Run the Saxon XSLT processor
+#HELP:Usage:
+#HELP:  COMMAND_NAME [Options] -- saxon-args ...
+
+fail () {
+    printf "%s: Error: %s\n" "$command_name" "$*" >&2
+    exit 1
+}
 
 #HELP:Options:
-#HELP:  --help | -h: Print this help
+#HELP:  --help, -h: Print this help
+opt_help () {
+    (( $# == 0 )) || fail "$FUNCNAME needs 0 options (got $#)"
+    sed -e "s/.*#""HELP://p;d" "$command_path" | m4 -P -DCOMMAND_NAME="command_name"
+    exit 0
+}
+
 #HELP:  --verbose, -v: Print additional diagnostics
+# don't unset verbose; we want verbosity to cascade into subprocesses
+opt_verbose () {
+    export verbose=true
+}
+
+vrun () {
+    if [[ -n ${verbose+is-set} ]]
+    then printf "# %s: running " "$command_name" >&2
+         printf " \"%s\"" "$@" >&2
+         printf "\n" >&2
+    fi
+    "$@"
+}
 
 #HELP:  --in=$file, -i $file: Take source input from file
 #HELP:      if file is "-", take input from stdin
@@ -81,35 +105,37 @@ do case "$option" in
             esac;;
         '?' ) fail "Unknown short option \"$OPTARG\"";;
         : ) fail "Short option \"$OPTARG\" missing argument";;
-        * ) fail_assert "Bad state in getopts (OPTARG=\"$OPTARG\")";;
+        * ) fail "Bad state in getopts (OPTARG=\"$OPTARG\")";;
    esac
 done
 shift $((OPTIND-1))
 
-command=('CONFIG_JAVA_COMMAND'
-           -classpath "$('CONFIG_JOIN_STRINGS_COMMAND' --delimiter=: 'CONFIG_SHARE_DIR'/*.jar)"
-           net.sf.saxon.Transform)
+build_path () {
+    if (( $# >= 1 ))
+    then printf "%s" "$1"
+         if (( $# >= 2 ))
+         then printf ":%s" "${@:2}"
+         fi
+    fi
+}
+       
+command=(java 
+         -classpath "$(build_path "$command_dir"/../share/saxon-cli/*.jar)"
+         net.sf.saxon.Transform)
 
-if [[ is-set = ${in_file+is-set} ]]
+
+if [[ -n ${in_file+is-set} ]]
 then command+=( -s:"$in_file" )
 fi
 
-if [[ is-set = ${out_file+is-set} ]]
+if [[ -n ${out_file+is-set} ]]
 then command+=( -o:"$out_file" )
 fi
 
-if [[ is-set = ${xsl_file+is-set} ]]
+if [[ -n ${xsl_file+is-set} ]]
 then command+=( -xsl:"$xsl_file" )
 fi
 
 command+=( "$@" )
 
 vrun "${command[@]}"
-
-m4_dnl Local Variables:
-m4_dnl mode: shell-script
-m4_dnl eval: (sh-set-shell "bash")
-m4_dnl indent-tabs-mode: nil
-m4_dnl fill-column: 9999
-m4_dnl End:
-

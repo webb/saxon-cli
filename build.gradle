@@ -10,5 +10,5 @@ dependencies {
 
 task out(type:Copy) {
      from configurations.runtime
-     into 'tmp/image/share/CONFIG_PACKAGE_NAME'
+     into 'share/saxon-cli'
 }
