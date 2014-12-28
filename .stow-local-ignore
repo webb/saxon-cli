@@ -1,0 +1,8 @@
+.gradle
+.git
+COPYING
+build.gradle
+.gitignore
+.*~$
+Makefile
+
