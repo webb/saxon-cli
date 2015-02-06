@@ -16,16 +16,13 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 set -o nounset -o errexit
-command_name=$(basename "$0")
-command_dir=$(dirname "$0")
-command_path=$0
 
-#HELP:COMMAND_NAME: Run the Saxon XSLT processor
+#HELP:saxon: Run the Saxon XSLT processor
 #HELP:Usage:
-#HELP:  COMMAND_NAME [Options] -- saxon-args ...
+#HELP:  saxon [Options] -- saxon-args ...
 
 fail () {
-    printf "%s: Error: %s\n" "$command_name" "$*" >&2
+    printf "saxon: Error: %s\n" "$*" >&2
     exit 1
 }
 
@@ -33,7 +30,7 @@ fail () {
 #HELP:  --help, -h: Print this help
 opt_help () {
     (( $# == 0 )) || fail "$FUNCNAME needs 0 options (got $#)"
-    sed -e "s/.*#""HELP://p;d" "$command_path" | m4 -P -DCOMMAND_NAME="command_name"
+    sed -e "s/.*#""HELP://p;d" 'CONFIG_BIN_DIR/saxon'
     exit 0
 }
 
@@ -45,7 +42,7 @@ opt_verbose () {
 
 vrun () {
     if [[ -n ${verbose+is-set} ]]
-    then printf "# %s: running " "$command_name" >&2
+    then printf "# saxon: running " >&2
          printf " \"%s\"" "$@" >&2
          printf "\n" >&2
     fi
@@ -118,11 +115,13 @@ build_path () {
          fi
     fi
 }
-       
-command=(java 
-         -classpath "$(build_path "$command_dir"/../share/saxon-cli/*.jar)"
-         net.sf.saxon.Transform)
 
+jars=('CONFIG_PACKAGE_SHARE_DIR'/*.jar)
+(( ${#jars[@]} > 0 )) || fail "No jars found in CONFIG_PACKAGE_SHARE_DIR"
+classpath=$(build_path "${jars[@]}")
+command=(java 
+         -classpath "$classpath"
+         net.sf.saxon.Transform)
 
 if [[ -n ${in_file+is-set} ]]
 then command+=( -s:"$in_file" )
