@@ -10,6 +10,8 @@ exec_prefix = @exec_prefix@
 bindir = @bindir@
 srcdir = @srcdir@
 
+# @var98283@
+
 package_share_dir = $(datadir)/$(PACKAGE_NAME)
 
 gradle = @gradle@
