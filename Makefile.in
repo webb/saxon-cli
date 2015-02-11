@@ -5,31 +5,37 @@ PACKAGE_NAME = @PACKAGE_NAME@
 prefix = @prefix@
 datarootdir = @datarootdir@
 datadir = @datadir@
-
 exec_prefix = @exec_prefix@
 bindir = @bindir@
-srcdir = @srcdir@
 
-# @var98283@
+INSTALL = @INSTALL@
+MKDIR_P = @MKDIR_P@
+SED = @SED@
+
+gradle = @gradle@
+java = @java@
+m4 = @m4@
+tokenize_strings = @tokenize_strings@
+
+CONFIG_COMMON_BASH = @CONFIG_COMMON_BASH@
+CONFIG_OPT_HELP_BASH = @CONFIG_OPT_HELP_BASH@
+CONFIG_OPT_VERBOSE_BASH = @CONFIG_OPT_VERBOSE_BASH@
+CONFIG_FAIL_BASH = @CONFIG_FAIL_BASH@
+CONFIG_TEMP_BASH = @CONFIG_TEMP_BASH@
 
 package_share_dir = $(datadir)/$(PACKAGE_NAME)
 
-gradle = @gradle@
-sed = @sed@
-install = @INSTALL@
-mkdir_p = @MKDIR_P@
-m4 = @m4@
 
-SRC_BIN_FILES = $(wildcard $(srcdir)/src/bin/*)
+SRC_BIN_FILES = $(wildcard src/bin/*)
 
-OUT_SHARE_FILES = $(wildcard $(srcdir)/out/share/*)
-OUT_BIN_FILES = $(patsubst $(srcdir)/src/bin/%,$(srcdir)/out/bin/%,$(SRC_BIN_FILES))
+OUT_SHARE_FILES = $(wildcard out/share/*)
+OUT_BIN_FILES = $(patsubst src/bin/%,out/bin/%,$(SRC_BIN_FILES))
 
-INSTALL_SHARE_FILES = $(patsubst $(srcdir)/out/share/%,$(package_share_dir)/%,$(OUT_SHARE_FILES))
-INSTALL_BIN_FILES = $(patsubst $(srcdir)/out/bin/%,$(bindir)/%,$(OUT_BIN_FILES))
+INSTALL_SHARE_FILES = $(patsubst out/share/%,$(package_share_dir)/%,$(OUT_SHARE_FILES))
+INSTALL_BIN_FILES = $(patsubst out/bin/%,$(bindir)/%,$(OUT_BIN_FILES))
 INSTALL_FILES = $(INSTALL_SHARE_FILES) $(INSTALL_BIN_FILES)
 
-BUILT_GRADLE_OUT_TOKEN = $(srcdir)/out/
+BUILT_GRADLE_OUT_TOKEN = out/built-gradle
 
 .PHONY: default
 default: build
@@ -38,31 +44,33 @@ default: build
 build: $(OUT_BIN_FILES)
 	$(gradle) out
 
-.PHONY: debug
-debug:
-	@ printf "SRC_BIN_FILES=\"%s\"\n" $(SRC_BIN_FILES)
-	@ printf "OUT_BIN_FILES=\"%s\"\n" $(OUT_BIN_FILES)
-	@ printf "OUT_SHARE_FILES=\"%s\"\n" $(OUT_SHARE_FILES)
-	@ printf "INSTALL_SHARE_FILES=\"%s\"\n" $(INSTALL_SHARE_FILES)
-	@ printf "INSTALL_BIN_FILES=\"%s\"\n" $(INSTALL_BIN_FILES)
-	@ printf "INSTALL_FILES=\"%s\"\n" $(INSTALL_FILES)
-
-$(srcdir)/out/bin/%: $(srcdir)/src/bin/% $(srcdir)/src/macros.m4
-	$(mkdir_p) $(dir $@)
-	$(m4) -DCONFIG_PACKAGE_SHARE_DIR=$(package_share_dir) -DCONFIG_BIN_DIR=$(bindir) --prefix-builtins $(srcdir)/src/macros.m4 $< > $@
+out/bin/%: src/bin/% src/macros.m4
+	$(MKDIR_P) $(dir $@)
+	$(m4)  --prefix-builtins \
+		-DCONFIG_PACKAGE_SHARE_DIR=$(package_share_dir) \
+		-DCONFIG_BIN_DIR=$(bindir) \
+		-DCONFIG_COMMON_BASH=$(CONFIG_COMMON_BASH) \
+		-DCONFIG_OPT_HELP_BASH=$(CONFIG_OPT_HELP_BASH) \
+		-DCONFIG_OPT_VERBOSE_BASH=$(CONFIG_OPT_VERBOSE_BASH) \
+		-DCONFIG_FAIL_BASH=$(CONFIG_FAIL_BASH) \
+		-DCONFIG_TEMP_BASH=$(CONFIG_TEMP_BASH) \
+		-DCONFIG_TOKENIZE_STRINGS_COMMAND=$(tokenize_strings) \
+		-DCONFIG_JAVA_COMMAND=$(java) \
+		src/macros.m4 $< \
+		> $@
 
 .PHONY: install
 install: $(INSTALL_FILES)
 
-$(package_share_dir)/%: $(srcdir)/out/share/%
+$(package_share_dir)/%: out/share/%
 	$(RM) -f $@
-	$(mkdir_p) $(dir $@)
-	$(install) --mode=644 $< $(dir $@)
+	$(MKDIR_P) $(dir $@)
+	$(INSTALL) --mode=644 $< $(dir $@)
 
-$(bindir)/%: $(srcdir)/out/bin/%
+$(bindir)/%: out/bin/%
 	$(RM) -f $@
-	$(mkdir_p) $(dir $@)
-	$(install) --mode=755 $< $(dir $@)
+	$(MKDIR_P) $(dir $@)
+	$(INSTALL) --mode=755 $< $(dir $@)
 
 .PHONY: clean
 clean:

@@ -15,39 +15,19 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
-set -o nounset -o errexit
+. 'CONFIG_COMMON_BASH'
+. 'CONFIG_OPT_HELP_BASH'
+. 'CONFIG_OPT_VERBOSE_BASH'
+. 'CONFIG_FAIL_BASH'
+. 'CONFIG_TEMP_BASH'
 
 #HELP:saxon: Run the Saxon XSLT processor
 #HELP:Usage:
 #HELP:  saxon [Options] -- saxon-args ...
 
-fail () {
-    printf "saxon: Error: %s\n" "$*" >&2
-    exit 1
-}
-
 #HELP:Options:
-#HELP:  --help, -h: Print this help
-opt_help () {
-    (( $# == 0 )) || fail "$FUNCNAME needs 0 options (got $#)"
-    sed -e "s/.*#""HELP://p;d" 'CONFIG_BIN_DIR/saxon'
-    exit 0
-}
-
+#HELP:  --help | -h: Print this help
 #HELP:  --verbose, -v: Print additional diagnostics
-# don't unset verbose; we want verbosity to cascade into subprocesses
-opt_verbose () {
-    export verbose=true
-}
-
-vrun () {
-    if [[ -n ${verbose+is-set} ]]
-    then printf "# saxon: running " >&2
-         printf " \"%s\"" "$@" >&2
-         printf "\n" >&2
-    fi
-    "$@"
-}
 
 #HELP:  --in=$file, -i $file: Take source input from file
 #HELP:      if file is "-", take input from stdin
@@ -107,19 +87,10 @@ do case "$option" in
 done
 shift $((OPTIND-1))
 
-build_path () {
-    if (( $# >= 1 ))
-    then printf "%s" "$1"
-         if (( $# >= 2 ))
-         then printf ":%s" "${@:2}"
-         fi
-    fi
-}
-
 jars=('CONFIG_PACKAGE_SHARE_DIR'/*.jar)
 (( ${#jars[@]} > 0 )) || fail "No jars found in CONFIG_PACKAGE_SHARE_DIR"
-classpath=$(build_path "${jars[@]}")
-command=(java 
+classpath=$('CONFIG_TOKENIZE_STRINGS_COMMAND' -o : "${jars[@]}")
+command=('CONFIG_JAVA_COMMAND'
          -classpath "$classpath"
          net.sf.saxon.Transform)
 

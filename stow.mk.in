@@ -6,8 +6,8 @@ prefix = @prefix@
 
 stow = @stow@
 
-.PHONY: default unstow uninstall install stow rm
-default: unstow uninstall install stow
+.PHONY: all unstow uninstall install stow rm
+all: rm install stow
 
 rm: unstow uninstall
 
