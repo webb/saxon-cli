@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2014 Georgia Tech Research Corporation (GTRC). All rights reserved.
+# Copyright 2014-2015 Georgia Tech Research Corporation (GTRC). All rights reserved.
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -35,6 +35,7 @@ unset in_file
 opt_in () {
     (( $# == 1 )) || fail_assert "$FUNCNAME takes 1 arg (got $#)"
     [[ $1 = "-" || -f "$1" ]] || fail "Value of --in must be a file or \"-\""
+    [[ ${in_file+is-set} != is-set ]] || fail "Option --in must not occur more than once"
     in_file=$1
 }
 
@@ -42,6 +43,7 @@ opt_in () {
 unset out_file
 opt_out () {
     (( $# == 1 )) || fail_assert "$FUNCNAME takes 1 arg (got $#)"
+    [[ ${out_file+is-set} != is-set ]] || fail "Option --out must not occur more than once"
     out_file=$1
 }
 
@@ -51,6 +53,7 @@ unset xsl_file
 opt_xsl () {
     (( $# == 1 )) || fail_assert "$FUNCNAME takes 1 arg (got $#)"
     [[ $1 = "-" || -f "$1" ]] || fail "Value of --xsl must be a file or \"-\" (got $1)"
+    [[ ${xsl_file+is-set} != is-set ]] || fail "Option --xsl must not occur more than once"
     xsl_file=$1
 }
 
