@@ -14,68 +14,65 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SHELL = @bash@
+SHELL = @bash@ -o pipefail
 
 PACKAGE_NAME = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
 prefix = @prefix@
-datarootdir = @datarootdir@
-datadir = @datadir@
-exec_prefix = @exec_prefix@
-bindir = @bindir@
 
 INSTALL = @INSTALL@
 MKDIR_P = @MKDIR_P@
 SED = @SED@
 
 gradle = @gradle@
-java = @java@
 m4 = @m4@
-tokenize_strings = @tokenize_strings@
+tar = @tar@
+zip = @zip@
 
-CONFIG_COMMON_BASH = @CONFIG_COMMON_BASH@
-CONFIG_OPT_HELP_BASH = @CONFIG_OPT_HELP_BASH@
-CONFIG_OPT_VERBOSE_BASH = @CONFIG_OPT_VERBOSE_BASH@
-CONFIG_FAIL_BASH = @CONFIG_FAIL_BASH@
-CONFIG_TEMP_BASH = @CONFIG_TEMP_BASH@
+src_files = src/bin/saxon
 
-package_share_dir = $(datadir)/$(PACKAGE_NAME)
+all_files_from_src = $(src_files:src/%=tmp/all/%)
 
-SRC_BIN_FILES = src/bin/saxon
+tokens_dir = tmp/tokens
 
-OUT_SHARE_FILES = $(wildcard out/share/*)
-OUT_BIN_FILES = $(SRC_BIN_FILES:src/bin/%=out/bin/%)
+gradle_out_dir = tmp/gradle-out
+built_gradle_out_token = $(tokens_dir)/built-gradle-out
+built_all_token = $(tokens_dir)/built-all
 
-INSTALL_SHARE_FILES = $(OUT_SHARE_FILES:out/share/%=$(package_share_dir)/%)
-INSTALL_BIN_FILES = $(OUT_BIN_FILES:out/bin/%=$(bindir)/%)
-INSTALL_FILES = $(INSTALL_SHARE_FILES) $(INSTALL_BIN_FILES)
+# dist
+dist_name = $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
-BUILT_GRADLE_OUT_TOKEN = out/tokens/gradle-out
+# invoke with $(call touch,$@)
+touch = $(MKDIR_P) $(dir $(1)) && touch $(1)
 
 .PHONY: all install uninstall clean distclean
 
-all: $(OUT_BIN_FILES) $(BUILT_GRADLE_OUT_TOKEN)
+all: $(built_all_token)
 
-$(BUILT_GRADLE_OUT_TOKEN): build.gradle
+test:
+	printf 'all_files_from_src=%s\n' $(all_files_from_src)
+
+$(built_all_token): $(built_gradle_out_token) $(all_files_from_src)
+	$(MKDIR_P) tmp/all/share/saxon-cli
+	(cd $(gradle_out_dir) && $(tar) cf - .) | (cd tmp/all/share/saxon-cli && $(tar) xf -)
+	$(call touch,$@)	
+
+$(built_gradle_out_token): build.gradle
 	$(gradle) out
-	$(MKDIR_P) $(dir $@)
-	touch $@
+	$(call touch,$@)	
 
-out/bin/%: src/bin/% src/macros.m4
+tmp/all/%: src/% 
 	$(MKDIR_P) $(dir $@)
-	$(m4)  --prefix-builtins \
-		-DCONFIG_PACKAGE_SHARE_DIR=$(package_share_dir) \
-		-DCONFIG_BIN_DIR=$(bindir) \
-		-DCONFIG_COMMON_BASH=$(CONFIG_COMMON_BASH) \
-		-DCONFIG_OPT_HELP_BASH=$(CONFIG_OPT_HELP_BASH) \
-		-DCONFIG_OPT_VERBOSE_BASH=$(CONFIG_OPT_VERBOSE_BASH) \
-		-DCONFIG_FAIL_BASH=$(CONFIG_FAIL_BASH) \
-		-DCONFIG_TEMP_BASH=$(CONFIG_TEMP_BASH) \
-		-DCONFIG_TOKENIZE_STRINGS_COMMAND=$(tokenize_strings) \
-		-DCONFIG_JAVA_COMMAND=$(java) \
-		src/macros.m4 $< \
-		> $@
+	$(INSTALL) $< $@
+	if [[ -x $< ]]; then chmod uog+x $@; fi
 
-install: $(BUILT_GRADLE_OUT_TOKEN) $(INSTALL_FILES)
+all_files = $(find tmp/all -type f)
+install_files = $(all_files:tmp/all/%=$(prefix)/%)
+
+.PHONY: install
+install: $(built_all_token)
+	$(MKDIR_P) $(prefix)
+	(cd tmp/all && $(tar) cf - .) | (cd $(prefix) && $(tar) xf -)
 
 uninstall:
 	$(RM) $(INSTALL_FILES)
@@ -91,8 +88,19 @@ $(bindir)/%: out/bin/%
 	$(INSTALL) --mode=755 $< $(dir $@)
 
 clean:
-	$(RM) -r out
+	$(RM) -r out tmp/all
 
 distclean: clean
-	$(RM) -r autom4te.cache .gradle
+	$(RM) -r autom4te.cache .gradle tmp
 	$(RM) Makefile config.log config.status stow.mk
+
+.PHONY: zip
+zip: tmp/$(dist_name).zip
+
+tmp/$(dist_name).zip: all
+	$(MAKE) -f prerequisites.mk
+	$(RM) -r tmp/$(dist_name)
+	$(MKDIR_P) tmp/$(dist_name)
+	(cd tmp/all && $(tar) cf - .) | (cd tmp/$(dist_name) && $(tar) xf -)
+	(cd tmp/prerequisites && $(tar) cf - .) | (cd tmp/$(dist_name) && $(tar) xf -)
+	cd tmp && $(zip) -9 -r $(dist_name).zip $(dist_name)
