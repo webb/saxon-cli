@@ -22,6 +22,7 @@ AC_DEFUN([WR_check_prog_options],[AC_PATH_PROG($1,$2)
   test "x$[]$1" = "x" && AC_MSG_ERROR([$1 not found])])dnl
 
 WR_check_prog(bash)
+WR_check_prog(find)
 WR_check_prog(gradle)
 WR_check_prog(tar)
 WR_check_prog(zip)

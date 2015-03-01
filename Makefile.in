@@ -27,11 +27,12 @@ INSTALL = @INSTALL@
 MKDIR_P = @MKDIR_P@
 
 gradle = @gradle@
+find = @find@
 m4 = @m4@
 tar = @tar@
 zip = @zip@
 
-src_files = src/bin/saxon
+src_files = $(shell $(find) src -type f ! -name '*~')
 
 all_files_from_src = $(src_files:src/%=tmp/all/%)
 
@@ -77,17 +78,7 @@ install: $(built_all_token)
 	(cd tmp/all && $(tar) cf - .) | (cd $(prefix) && $(tar) xf -)
 
 uninstall:
-	$(RM) $(INSTALL_FILES)
-
-$(package_share_dir)/%: out/share/%
-	$(RM) -f $@
-	$(MKDIR_P) $(dir $@)
-	$(INSTALL) --mode=644 $< $(dir $@)
-
-$(bindir)/%: out/bin/%
-	$(RM) -f $@
-	$(MKDIR_P) $(dir $@)
-	$(INSTALL) --mode=755 $< $(dir $@)
+	$(RM) $(install_files)
 
 clean:
 	$(RM) -r out tmp/all
