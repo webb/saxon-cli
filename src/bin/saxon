@@ -18,12 +18,12 @@
 set -o nounset -o errexit
 
 root_dir=$(dirname "$0")/..
-. "$root_dir"/share/wrtools-core/opt_help.bash
-. "$root_dir"/share/wrtools-core/opt_verbose.bash
-. "$root_dir"/share/wrtools-core/fail.bash
-. "$root_dir"/share/wrtools-core/temp.bash
+. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/opt_help.bash
+. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/opt_verbose.bash
+. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/fail.bash
+. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/temp.bash
 
-package_share_dir="$root_dir"/share/saxon-cli
+package_share_dir="$root_dir"/share/MACRO_PACKAGE_NAME
 
 #HELP:saxon: Run the Saxon XSLT processor
 #HELP:Usage:

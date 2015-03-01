@@ -20,9 +20,11 @@ PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 prefix = @prefix@
 
+# prerequisite packages
+wrtools_core_package_name=wrtools-core
+
 INSTALL = @INSTALL@
 MKDIR_P = @MKDIR_P@
-SED = @SED@
 
 gradle = @gradle@
 m4 = @m4@
@@ -49,21 +51,21 @@ touch = $(MKDIR_P) $(dir $(1)) && touch $(1)
 
 all: $(built_all_token)
 
-test:
-	printf 'all_files_from_src=%s\n' $(all_files_from_src)
-
 $(built_all_token): $(built_gradle_out_token) $(all_files_from_src)
-	$(MKDIR_P) tmp/all/share/saxon-cli
-	(cd $(gradle_out_dir) && $(tar) cf - .) | (cd tmp/all/share/saxon-cli && $(tar) xf -)
+	$(MKDIR_P) tmp/all/share/$(PACKAGE_NAME)
+	(cd $(gradle_out_dir) && $(tar) cf - .) | (cd tmp/all/share/$(PACKAGE_NAME) && $(tar) xf -)
 	$(call touch,$@)	
 
 $(built_gradle_out_token): build.gradle
 	$(gradle) out
 	$(call touch,$@)	
 
-tmp/all/%: src/% 
+tmp/all/%: src/% m4-header.m4
 	$(MKDIR_P) $(dir $@)
-	$(INSTALL) $< $@
+	$(m4) -P \
+		-DMACRO_PACKAGE_NAME=$(PACKAGE_NAME) \
+		-DMACRO_WRTOOLS_CORE_PACKAGE_NAME=$(wrtools_core_package_name) \
+		m4-header.m4 $< > $@
 	if [[ -x $< ]]; then chmod uog+x $@; fi
 
 all_files = $(find tmp/all -type f)
