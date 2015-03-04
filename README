@@ -1,3 +1,4 @@
 
 saxon-cli: A command-line wrapper for the Saxon HE XSLT processor.
 
+To compile use: ./configure && make && make install
