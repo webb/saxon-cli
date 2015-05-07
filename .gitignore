@@ -1,0 +1,12 @@
+*~
+tmp
+\#*\#
+.\#*
+.gradle
+share/saxon-cli/*.jar
+autom4te.cache
+config.log
+config.status
+Makefile
+out
+stow.mk
