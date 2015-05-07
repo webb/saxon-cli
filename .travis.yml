@@ -1,7 +1,8 @@
 language: c
 install:
 - sudo apt-get install gradle
-script: ./configure --prefix="$PWD/root" && make zip dist_name=${TRAVIS_TAG}
+script: ./configure --prefix="$PWD/root" && make
+after_success: make zip dist_name=${TRAVIS_TAG}
 deploy:
   provider: releases
   api_key:
