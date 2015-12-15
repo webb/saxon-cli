@@ -43,6 +43,7 @@ opt_in () {
 }
 
 #HELP:  --out=$file, -o $file: Put output to file
+#HELP:      Default output is stdout
 unset out_file
 opt_out () {
     (( $# == 1 )) || fail_assert "$FUNCNAME takes 1 arg (got $#)"
