@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    runtime 'net.sf.saxon:Saxon-HE:9.6.0-5'
+    runtime 'net.sf.saxon:Saxon-HE:9.7.0-4'
 }
 
 task out(type:Copy) {
