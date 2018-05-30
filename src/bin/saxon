@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Copyright 2014-2015 Georgia Tech Research Corporation (GTRC). All rights reserved.
+# Copyright 2014-2020 Georgia Tech Research Corporation (GTRC). All rights reserved.
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,12 @@
 set -o nounset -o errexit
 
 root_dir=$(dirname "$0")/..
-. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/opt_help.bash
-. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/opt_verbose.bash
-. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/fail.bash
-. "$root_dir"/share/MACRO_WRTOOLS_CORE_PACKAGE_NAME/temp.bash
+. "$root_dir"/share/wrtools-core/opt_help.bash
+. "$root_dir"/share/wrtools-core/opt_verbose.bash
+. "$root_dir"/share/wrtools-core/fail.bash
+. "$root_dir"/share/wrtools-core/temp.bash
 
-package_share_dir="$root_dir"/share/MACRO_PACKAGE_NAME
+package_share_dir="$root_dir"/share/saxon-cli
 
 #HELP:saxon: Run the Saxon XSLT processor
 #HELP:Usage:

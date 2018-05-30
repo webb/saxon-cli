@@ -2,9 +2,18 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([saxon-cli], [0], [wr@gatech.edu])
+AC_INIT([Command-line interface for Saxon],[0],[wr@gatech.edu],[saxon-cli],[wr@gatech.edu])
+AC_CONFIG_SRCDIR([Makefile.in])
 AC_COPYRIGHT
-AC_CONFIG_SRCDIR
+
+if test -f Makefile.in
+then AC_MSG_ERROR([Do not build where you code (found Makefile.in)])
+fi
+
+if test "x$prefix" = xNONE
+then AC_MSG_ERROR([prefix is unset])
+else AC_MSG_RESULT([prefix set to $prefix])
+fi
 
 # Checks for programs.
 AC_PROG_INSTALL
@@ -24,19 +33,12 @@ AC_DEFUN([WR_check_prog_options],[AC_PATH_PROGS($1,$2)
 WR_check_prog(bash)
 WR_check_prog(find)
 WR_check_prog(gradle)
+WR_check_prog(realpath)
 WR_check_prog(tar)
 WR_check_prog(zip)
 WR_check_prog_options(m4,gm4 m4)
 
 AC_PATH_PROGS(stow,stow,stow)
-
-# Checks for libraries.
-
-# Checks for header files.
-
-# Checks for typedefs, structures, and compiler characteristics.
-
-# Checks for library functions.
 
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
 AC_CONFIG_FILES([stow.mk], [chmod 444 stow.mk])
