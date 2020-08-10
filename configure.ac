@@ -33,10 +33,15 @@ AC_DEFUN([WR_check_prog_options],[AC_PATH_PROGS($1,$2)
 WR_check_prog(bash)
 WR_check_prog(find)
 WR_check_prog(gradle)
-WR_check_prog(realpath)
+
+AC_PATH_PROGS(realpath,grealpath realpath)
+test "x$[]realpath" = "x" && AC_MSG_ERROR([realpath not found])
+
 WR_check_prog(tar)
 WR_check_prog(zip)
 WR_check_prog_options(m4,gm4 m4)
+
+
 
 AC_PATH_PROGS(stow,stow,stow)
 
