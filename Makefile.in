@@ -33,14 +33,7 @@ builddir = @builddir@
 prefix = @prefix@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 
-
-# PACKAGE_NAME = @PACKAGE_NAME@
-# PACKAGE_VERSION = @PACKAGE_VERSION@
-# prefix = @prefix@
-
-# # prerequisite packages
-# wrtools_core_package_name=wrtools-core
-
+# commands
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -57,7 +50,7 @@ zip = @zip@
 tmp_dir = ${builddir}/tmp
 tokens_dir = ${tmp_dir}/tokens
 all_dir = ${tmp_dir}/all
-jars_dir = ${all_dir}/share/${PACKAGE_NAME}
+jars_dir = ${all_dir}/share/${PACKAGE_TARNAME}
 
 gradle_out_dir = ${tmp_dir}/gradle-out
 built_jars_token = ${tokens_dir}/built-jars
