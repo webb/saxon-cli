@@ -621,10 +621,6 @@ PACKAGE_URL='https://github.com/webb/saxon-cli'
 ac_unique_file="Makefile.in"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-stow
-m4
-zip
-tar
 realpath
 gradle
 find
@@ -2068,8 +2064,6 @@ printf "%s\n" "$ac_cv_path_SED" >&6; }
   rm -f conftest.sed
 
 
-
-
 # Extract the first word of "bash", so it can be a program name with args.
 set dummy bash; ac_word=$2
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -2115,9 +2109,12 @@ printf "%s\n" "no" >&6; }
 fi
 
 
-  test "x$bash" = "x" && as_fn_error $? "bash not found" "$LINENO" 5
-# Extract the first word of "find", so it can be a program name with args.
-set dummy find; ac_word=$2
+test "x$bash" = "x" && as_fn_error $? "bash not found" "$LINENO" 5
+
+for ac_prog in gfind find
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 printf %s "checking for $ac_word... " >&6; }
 if test ${ac_cv_path_find+y}
@@ -2161,7 +2158,11 @@ printf "%s\n" "no" >&6; }
 fi
 
 
-  test "x$find" = "x" && as_fn_error $? "find not found" "$LINENO" 5
+  test -n "$find" && break
+done
+
+test "x$find" = "x" && as_fn_error $? "find not found" "$LINENO" 5
+
 # Extract the first word of "gradle", so it can be a program name with args.
 set dummy gradle; ac_word=$2
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -2207,7 +2208,7 @@ printf "%s\n" "no" >&6; }
 fi
 
 
-  test "x$gradle" = "x" && as_fn_error $? "gradle not found" "$LINENO" 5
+test "x$gradle" = "x" && as_fn_error $? "gradle not found" "$LINENO" 5
 
 for ac_prog in grealpath realpath
 do
@@ -2260,204 +2261,6 @@ fi
 done
 
 test "x$realpath" = "x" && as_fn_error $? "realpath not found" "$LINENO" 5
-
-# Extract the first word of "tar", so it can be a program name with args.
-set dummy tar; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_path_tar+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  case $tar in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_tar="$tar" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_path_tar="$as_dir$ac_word$ac_exec_ext"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-tar=$ac_cv_path_tar
-if test -n "$tar"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $tar" >&5
-printf "%s\n" "$tar" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-  test "x$tar" = "x" && as_fn_error $? "tar not found" "$LINENO" 5
-# Extract the first word of "zip", so it can be a program name with args.
-set dummy zip; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_path_zip+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  case $zip in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_zip="$zip" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_path_zip="$as_dir$ac_word$ac_exec_ext"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-zip=$ac_cv_path_zip
-if test -n "$zip"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $zip" >&5
-printf "%s\n" "$zip" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-  test "x$zip" = "x" && as_fn_error $? "zip not found" "$LINENO" 5
-for ac_prog in gm4 m4
-do
-  # Extract the first word of "$ac_prog", so it can be a program name with args.
-set dummy $ac_prog; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_path_m4+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  case $m4 in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_m4="$m4" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_path_m4="$as_dir$ac_word$ac_exec_ext"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-m4=$ac_cv_path_m4
-if test -n "$m4"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $m4" >&5
-printf "%s\n" "$m4" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-  test -n "$m4" && break
-done
-
-  test "x$m4" = "x" && as_fn_error $? "m4 not found" "$LINENO" 5
-
-
-
-for ac_prog in stow
-do
-  # Extract the first word of "$ac_prog", so it can be a program name with args.
-set dummy $ac_prog; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_path_stow+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  case $stow in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_stow="$stow" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_path_stow="$as_dir$ac_word$ac_exec_ext"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-stow=$ac_cv_path_stow
-if test -n "$stow"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $stow" >&5
-printf "%s\n" "$stow" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-  test -n "$stow" && break
-done
-test -n "$stow" || stow="stow"
-
 
 ac_config_files="$ac_config_files Makefile"
 
