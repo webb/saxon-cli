@@ -1839,14 +1839,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-if test -f Makefile.in
-then as_fn_error $? "Do not build where you code (found Makefile.in)" "$LINENO" 5
-fi
-
-if test "x$prefix" = xNONE
-then as_fn_error $? "prefix is unset" "$LINENO" 5
-else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: prefix set to $prefix" >&5
-printf "%s\n" "prefix set to $prefix" >&6; }
+if test "x$prefix" = "xNONE"
+then as_fn_error $? "\$prefix is unset. Set with --prefix=\${install root directory}" "$LINENO" 5
 fi
 
 # Checks for programs.

@@ -6,13 +6,8 @@ AC_INIT([Saxon-CLI],[0],[https://github.com/webb/saxon-cli/issues],[saxon-cli],[
 AC_CONFIG_SRCDIR([Makefile.in])
 AC_COPYRIGHT
 
-if test -f Makefile.in
-then AC_MSG_ERROR([Do not build where you code (found Makefile.in)])
-fi
-
-if test "x$prefix" = xNONE
-then AC_MSG_ERROR([prefix is unset])
-else AC_MSG_RESULT([prefix set to $prefix])
+if test "x$prefix" = "xNONE"
+then AC_MSG_ERROR([\$prefix is unset. Set with --prefix=\${install root directory}])
 fi
 
 # Checks for programs.
