@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([Command-line interface for Saxon],[0],[wr@gatech.edu],[saxon-cli],[wr@gatech.edu])
+AC_INIT([Saxon-CLI],[0],[https://github.com/webb/saxon-cli/issues],[saxon-cli],[https://github.com/webb/saxon-cli])
 AC_CONFIG_SRCDIR([Makefile.in])
 AC_COPYRIGHT
 
