@@ -27,6 +27,8 @@ test "x$gradle" = "x" && AC_MSG_ERROR([gradle not found])
 AC_PATH_PROGS(realpath,grealpath realpath)
 test "x$realpath" = "x" && AC_MSG_ERROR([realpath not found])
 
+AC_CHECK_FILE([$prefix/share/wrtools-core/opt_help.bash],,[AC_MSG_ERROR(package wrtools-core not found)])
+
 AC_CONFIG_FILES([Makefile], [chmod 444 Makefile])
 AC_CONFIG_FILES([stow.mk], [chmod 444 stow.mk])
 AC_OUTPUT
