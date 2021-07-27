@@ -4,9 +4,13 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+  runtime
+}
+
 dependencies {
     // https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE
-    runtime group: 'net.sf.saxon', name: 'Saxon-HE', version: '10.1'
+    runtime group: 'net.sf.saxon', name: 'Saxon-HE', version: '10.5'
 }
 
 task save_jars(type:Copy) {

@@ -1,2 +1,7 @@
 /autom4te.cache
 /.gradle
+/Makefile
+/config.log
+/config.status
+/stow.mk
+/tmp

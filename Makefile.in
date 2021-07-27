@@ -40,12 +40,9 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_DATA = @INSTALL_DATA@
 MKDIR_P = @MKDIR_P@
 
-gradle = @gradle@
 find = @find@
-m4 = @m4@
+gradle = @gradle@
 realpath = @realpath@
-tar = @tar@
-zip = @zip@
 
 tmp_dir = ${builddir}/tmp
 tokens_dir = ${tmp_dir}/tokens
@@ -59,7 +56,7 @@ built_all_token =  ${tokens_dir}/built-all
 all_files = \
   ${all_dir}/bin/saxon
 
-install_files_default = ${shell find ${all_dir} -type f || true}
+install_files_default = ${shell ${find} ${all_dir} -type f 2>/dev/null || true}
 install_files = ${install_files_default:${all_dir}/%=${prefix}/%}
 
 #HELP:Default target is "all". Targets include:
@@ -72,11 +69,11 @@ all: ${all_files} ${built_jars_token}
 ${built_jars_token}: ${srcdir}/build.gradle
 	@ echo build $@ from $^ because $?
 	${RM} -r ${jars_dir}
-	${gradle} --no-daemon \
-	          --project-prop jars_dir=${shell ${realpath} -m ${jars_dir}} \
-	          --project-cache-dir=${builddir}/tmp/.gradle \
-	          --build-file ${srcdir}/build.gradle \
-	          save_jars
+	${gradle} \
+	  --project-prop jars_dir=${shell ${realpath} -m ${jars_dir}} \
+	  --project-cache-dir=${builddir}/tmp/.gradle \
+	  --project-dir=${srcdir} \
+	  save_jars
 	${MKDIR_P} ${dir $@}
 	touch $@
 
